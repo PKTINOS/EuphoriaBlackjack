@@ -1,0 +1,157 @@
+include get.e
+
+
+
+sequence deck
+deck = {1,2,3,4,5,6,7,8,9,10,11,12,13}
+--Where 11 is Jester 12 is Queen 13 is King--
+
+atom robotscore,playagain,selec
+playagain = 0
+robotscore = 0
+function pickRandomCard()
+    atom temp , temp2
+    temp2=0
+    temp = deck[rand(13)]
+    if temp > 10 then
+	return 10
+    end if
+    if temp = 1 then
+	puts(1,"You got an Ace. Choices:\n[1] Use it as 1\n[2] Use it as 11\n")
+	temp2 = prompt_number("Your choice:",{1,2})
+	if temp2 = 1 then
+	    return 1
+	end if
+	if temp2 = 2 then
+	    return 11
+	end if
+    end if
+    return temp
+end function
+
+function pickRandomCardRobot()
+    atom temp
+    temp = deck[rand(13)]
+    if temp > 10 then
+	return 10
+    end if
+    return temp
+end function
+		
+
+
+
+	    
+procedure drawCards()
+    atom tempcard , amount , tempcard2, total
+    total = 0
+    amount = 0
+    tempcard = 0
+    while total<=16 do
+	tempcard = pickRandomCardRobot()
+	amount +=1
+	if tempcard = 1 then
+	    if total <= 10 then
+		tempcard = 11
+	    end if
+	    if total > 10 then
+		tempcard = 1
+	    end if
+	end if
+	total += tempcard
+   end while
+   robotscore = total
+   printf(1,"\nYour opponnent has drawn %d cards!",amount)
+   if robotscore = 21 then
+    puts(1,"\nLooks like your opponnent scored a BlackJack! You lose!")
+    playagain = 1
+    return
+   end if
+   if robotscore > 21 then
+    printf(1,"\nLooks like your opponnent drew too many cards. He had %d as a final score. You win!",robotscore)
+   playagain = 1
+    return
+   end if
+   puts(1,"\nIt's your turn to draw!")
+   total = 0
+   tempcard = 0
+   tempcard2 = 0
+   amount = 0
+   tempcard = pickRandomCard()
+   tempcard2 = pickRandomCard()
+   total = tempcard + tempcard2
+   puts(1,"\n\nYou got these cards:\n\n")
+   printf(1,"[%d]",tempcard)
+   printf(1,"[%d]",tempcard2)
+   printf(1, "\n\nthat give you a total of %d",total)
+   if total = 21 then
+    puts(1,"\nLooks like you scored a BlackJack!! You win!")
+    --Insert winning code here--
+   end if
+   while 1=1 do
+    puts(1,"\nDraw again?\n[1] Yes\n[2] No")
+    amount = prompt_number("\n",{1,2}) --Use an older variable so we dont have to--
+				     --declare a new one--
+    if amount = 1 then
+	tempcard = pickRandomCard()
+	total+=tempcard
+	puts(1,"\nYou picked a card!\n")
+	printf(1,"[%d]",tempcard)
+	if total > 21 then
+	    puts(1,"\nUh-oh. Looks like you over drew. You lose!")
+	    playagain = 1
+		      exit
+	end if
+	if total = 21 then
+	    puts(1,"\nLooks like you scored a BlackJack! You win!")
+	    playagain = 1
+    return
+		      exit
+	end if
+	printf(1,"\nYour new total: %d",total)
+    end if
+    if amount = 2 then
+	exit
+    end if
+   end while
+   puts(1,"\n\n\nBoth of you have drawn your cards!\nResults:")
+   printf(1,"\nYou: %d",total)
+   printf(1,"\nOpponnent: %d",robotscore)
+   if total > robotscore then
+    puts(1,"\nLooks like you had a bigger score than your opponnent! You win!")
+    playagain = 1
+    return
+   end if
+   puts(1,"\nLooks like you had a lower score than your opponnent. You lose!")
+   playagain = 1
+    return
+end procedure
+
+procedure gameStart()
+    drawCards()
+end procedure
+
+procedure mainMenu()
+atom selection
+puts(1,"Blackjack by PKTINOS\nMade in OpenEuphoria.\n\nPlease choose an option:\n[1]Play\n[2]Quit\n")
+selection = prompt_number("Your choice:",{1,2})
+if selection > 2 then
+abort(0)
+end if
+if selection = 1 then   
+gameStart()
+return
+end if
+end procedure
+    
+
+mainMenu() --Init game--
+while 1=1 do
+selec = 0
+if playagain = 1 then
+playagain = 0
+puts(1,"\n\n\n")
+mainMenu()
+end if
+end while
+
